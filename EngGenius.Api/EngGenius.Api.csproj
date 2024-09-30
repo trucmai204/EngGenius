@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EngGenius.Database\EngGenius.Database.csproj" />
+    <ProjectReference Include="..\GenAI\GenAI.csproj" />
   </ItemGroup>
 
 </Project>
