@@ -17,7 +17,17 @@ namespace EngGenius.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicies",
+                    builder =>
+                    {
+                        builder.AllowAnyHeader().AllowAnyMethod();
+                    });
+            });
+
             var app = builder.Build();
+            app.UseCors("CorsPolicies");
 
             // Configure the HTTP request pipeline.
             app.UseSwagger();
