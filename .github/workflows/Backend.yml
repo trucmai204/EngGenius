@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Backend Deployment
 
 on:
@@ -8,10 +5,10 @@ on:
     branches:
       - master
 env:
-  AZURE_WEBAPP_NAME: enggeinus
-  AZURE_WEBAPP_PACKAGE_PATH: EngGenius.Api/publish
+  WEBAPP_NAME: enggeinus
+  PUBLISHED_PACKAGE_PATH: EngGenius.Api/publish
   CONFIGURATION: Release
-  DOTNET_CORE_VERSION: 8.0.x
+  DOTNET_VERSION: 8.0.x
   WORKING_DIRECTORY: EngGenius.Api
   
 jobs:
@@ -21,10 +18,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup .NET SDK
+    - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+        dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Cache NuGet packages
       uses: actions/cache@v3
@@ -44,13 +41,13 @@ jobs:
       run: dotnet test ${{ env.WORKING_DIRECTORY }} --no-build
 
     - name: Publish
-      run: dotnet publish ${{ env.WORKING_DIRECTORY }} --configuration ${{ env.CONFIGURATION }} --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      run: dotnet publish ${{ env.WORKING_DIRECTORY }} --configuration ${{ env.CONFIGURATION }} --no-build --output ${{ env.PUBLISHED_PACKAGE_PATH }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: webapp
-        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        path: ${{ env.PUBLISHED_PACKAGE_PATH }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -66,7 +63,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: webapp
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          path: ${{ env.PUBLISHED_PACKAGE_PATH }}
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -75,11 +72,11 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_402FD9B787BC4B3288DE743B007B8FE8 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B859B03F7EC74D26A2343B44FAEAF1F4 }}
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: ${{ env.WEBAPP_NAME }}
           slot-name: 'Production'
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: ${{ env.PUBLISHED_PACKAGE_PATH }}
           
