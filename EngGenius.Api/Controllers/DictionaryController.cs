@@ -1,4 +1,6 @@
-﻿using GenAI;
+﻿using EngGenius.Database;
+using EngGenius.Domains;
+using GenAI;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -8,11 +10,19 @@ namespace EngGenius.Api.Controllers
     [ApiController]
     public class DictionaryController : ControllerBase
     {
-        [HttpGet]
-        public async Task<ActionResult<string>> Test(string apiKey, string keyword, string? context)
+        private readonly AppDbContext _db;
+
+        public DictionaryController(AppDbContext context)
+        {
+            _db = context;
+        }
+
+        [HttpGet("Search")]
+        public async Task<ActionResult<string>> Search(int userId, string apiKey, string keyword, string? context)
         {
             var promptBuilder = new StringBuilder();
-            var test = new Generator
+
+            var generator = new Generator
             {
                 ApiKey = apiKey.Trim(),
             };
@@ -36,7 +46,15 @@ namespace EngGenius.Api.Controllers
             promptBuilder.AppendLine($"- Một số fun facts ít người biết liên quan đến '{keyword}' (nếu có).");
             promptBuilder.AppendLine("Cách trình bày output của bạn phải thật dễ hiểu và chi tiết, tuy nhiên không được quá dài dòng.");
 
-            var result = await test.Generate(promptBuilder.ToString());
+            var result = await generator.Generate(promptBuilder.ToString());
+
+            var userHistory = new UserHistory
+            {
+                Input = $"{keyword}\n{context}".Trim(),
+                Output = result,
+                ActionTime = DateTime.Now,
+            };
+
             return Ok(result);
         }
     }

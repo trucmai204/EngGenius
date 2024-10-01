@@ -10,17 +10,16 @@ namespace EngGenius.Api.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly AppDbContext _context;
-
+        private readonly AppDbContext _db;
         public UserController(AppDbContext context)
         {
-            _context = context;
+            _db = context;
         }
 
-        [HttpGet("GetAllUser")]
+        [HttpGet("GetAllUsers")]
         public async Task<ActionResult<List<User>>> GetAllUsers()
         {
-            return await _context.User
+            return await _db.User
                 .Include(u => u.Level)
                 .Include(u => u.Permission)
                 .ToListAsync();
@@ -29,7 +28,7 @@ namespace EngGenius.Api.Controllers
         [HttpGet("Login")]
         public async Task<ActionResult<UserPermission>> Login(string email, string password)
         {
-            var user = await _context.User
+            var user = await _db.User
                 .Include(u => u.Permission)
                 .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
 
@@ -44,7 +43,7 @@ namespace EngGenius.Api.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<User>> Register([FromBody] User user)
         {
-            var isExist = await _context.User.AnyAsync(u => u.Email == user.Email.ToLower().Trim());
+            var isExist = await _db.User.AnyAsync(u => u.Email == user.Email.ToLower().Trim());
             if (isExist)
             {
                 return BadRequest("Email đã tồn tại!");
@@ -52,8 +51,8 @@ namespace EngGenius.Api.Controllers
 
             user.PermissionId = EnumPermission.Basic;
 
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
+            _db.User.Add(user);
+            await _db.SaveChangesAsync();
             return Ok(user);
         }
     }

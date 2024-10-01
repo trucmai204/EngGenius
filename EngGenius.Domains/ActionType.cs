@@ -1,9 +1,10 @@
-﻿namespace EngGenius.Domains
+﻿using EngGenius.Domains.Enum;
+
+namespace EngGenius.Domains
 {
     public class ActionType
     {
-        public int Id { get; set; }
+        public EnumActionType Id { get; }
         public string Name { get; set; }
     }
-
 }
