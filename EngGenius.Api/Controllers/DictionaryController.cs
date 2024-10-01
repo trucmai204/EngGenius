@@ -53,6 +53,7 @@ namespace EngGenius.Api.Controllers
                 Input = $"{keyword}\n{context}".Trim(),
                 Output = result,
                 ActionTime = DateTime.Now,
+
             };
 
             return Ok(result);

@@ -15,5 +15,4 @@ namespace EngGenius.Domains
         public virtual ActionType ActionType { get; set; }
         public virtual User User { get; set; }
     }
-
 }
