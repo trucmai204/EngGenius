@@ -20,7 +20,6 @@ namespace EngGenius.Api.Controllers
         public async Task<ActionResult<List<User>>> GetAllUsers()
         {
             return await _db.User
-                .Include(u => u.Level)
                 .Include(u => u.Permission)
                 .ToListAsync();
         }

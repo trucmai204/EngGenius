@@ -50,11 +50,15 @@ namespace EngGenius.Api.Controllers
 
             var userHistory = new UserHistory
             {
+                ActionTypeId = Domains.Enum.EnumActionType.DictionarySearch,
                 Input = $"{keyword}\n{context}".Trim(),
                 Output = result,
                 ActionTime = DateTime.Now,
-
+                UserId = userId,
+                IsSuccess = true
             };
+            _db.UserHistory.Add(userHistory);
+            await _db.SaveChangesAsync();
 
             return Ok(result);
         }

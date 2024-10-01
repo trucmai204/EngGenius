@@ -1,4 +1,10 @@
-﻿CREATE TABLE [User] (
+﻿USE master;
+DROP DATABASE [EngGenius];
+CREATE DATABASE [EngGenius];
+GO
+USE [EngGenius];
+GO
+CREATE TABLE [User] (
 	[Id] INT IDENTITY,
 	[Name] NVARCHAR(255),
 	[Email] VARCHAR(255),
@@ -18,7 +24,8 @@ CREATE TABLE [Level] (
 
 CREATE TABLE [UserPermission] (
 	[Id] INT IDENTITY,
-	[MaxQuestionPerDay] INT,
+	[Name] NVARCHAR(255),
+	[MaxWrittingPerDay] INT,
 	[MaxTestPerDay] INT,
 	[CanUseChatbot] BIT,
 	PRIMARY KEY([Id])
@@ -46,3 +53,24 @@ ALTER TABLE [User] ADD FOREIGN KEY([PermissionId]) REFERENCES [UserPermission]([
 
 ALTER TABLE [UserHistory] ADD FOREIGN KEY([ActionTypeId]) REFERENCES [ActionType]([Id]);
 ALTER TABLE [UserHistory] ADD FOREIGN KEY([UserId]) REFERENCES [User]([Id]);
+
+
+INSERT INTO [Level] ([Name], [Description])
+VALUES 
+    (N'A1', N'Beginner (Người mới bắt đầu)'),
+    (N'A2', N'Elementary (Sơ cấp)'),
+    (N'B1', N'Intermediate (Trung cấp)'),
+    (N'B2', N'Upper-Intermediate (Trung cao cấp)'),
+    (N'C1', N'Advanced (Cao cấp)'),
+    (N'C2', N'Proficient (Thành thạo)');
+
+INSERT INTO [UserPermission] ([Name], [MaxWrittingPerDay], [MaxTestPerDay], [CanUseChatbot]) 
+VALUES 
+	('Free', 5, 5, 0),
+	('Premium', NULL, NULL, 1);
+
+INSERT INTO [ActionType] ([Name])
+VALUES 
+    (N'Tra cứu từ điển'),
+    (N'Luyện viết'),
+    (N'Làm bài tập');

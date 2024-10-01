@@ -3,6 +3,6 @@
     public enum EnumActionType
     {
         DictionarySearch = 1,
-        QuestionGeneration = 2,
+        Writting = 2,
     }
 }
