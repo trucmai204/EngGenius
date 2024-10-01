@@ -46,7 +46,7 @@ namespace EngGenius.Api.Controllers
             promptBuilder.AppendLine($"- Một số fun facts ít người biết liên quan đến '{keyword}' (nếu có).");
             promptBuilder.AppendLine("Cách trình bày output của bạn phải thật dễ hiểu và chi tiết, tuy nhiên không được quá dài dòng.");
 
-            var result = await generator.Generate(promptBuilder.ToString());
+            var result = await generator.GenerateContent(promptBuilder.ToString());
 
             var userHistory = new UserHistory
             {
