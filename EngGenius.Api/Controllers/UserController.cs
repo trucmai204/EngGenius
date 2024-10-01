@@ -11,9 +11,9 @@ namespace EngGenius.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly AppDbContext _db;
-        public UserController(AppDbContext context)
+        public UserController(AppDbContext db)
         {
-            _db = context;
+            _db = db;
         }
 
         [HttpGet("GetAllUsers")]
@@ -43,8 +43,10 @@ namespace EngGenius.Api.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<User>> Register([FromBody] User user)
         {
-            var isExist = await _db.User.AnyAsync(u => u.Email == user.Email.ToLower().Trim());
-            if (isExist)
+            var emailExisted = await _db.User
+                .AnyAsync(u => u.Email == user.Email.ToLower().Trim());
+
+            if (emailExisted)
             {
                 return BadRequest("Email đã tồn tại!");
             }

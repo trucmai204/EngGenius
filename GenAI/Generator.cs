@@ -9,42 +9,65 @@ namespace GenAI
     {
         public string ApiKey { get; set; }
 
-        public async Task<string> Generate(string userInput, TemperatureEnum temperature = TemperatureEnum.Medium)
+        public async Task<string> GenerateContent(string userInput, bool useJsonForOutput = false, TemperatureEnum temperature = TemperatureEnum.Medium)
         {
+            var apiEndpoint = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key={ApiKey}";
             using (HttpClient client = new HttpClient())
             {
                 var requestBody = new
                 {
                     contents = new[]
                     {
-                    new
-                    {
-                        role = "user",
-                        parts = new[]
+                        new
                         {
-                            new
+                            parts = new[]
                             {
-                                text = userInput
+                                new
+                                {
+                                    text = userInput
+                                }
                             }
                         }
                     },
-                },
+                    safetySettings = new[]
+                    {
+                        new
+                        {
+                            category = "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            threshold = "BLOCK_NONE"
+                        },
+                        new
+                        {
+                            category = "HARM_CATEGORY_HARASSMENT",
+                            threshold = "BLOCK_NONE"
+                        },
+                        new
+                        {
+                            category = "HARM_CATEGORY_HATE_SPEECH",
+                            threshold = "BLOCK_NONE"
+                        },
+                        new
+                        {
+                            category = "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            threshold = "BLOCK_NONE"
+                        }
+                    },
                     generationConfig = new
                     {
                         temperature = (double)temperature / 100,
-                        responseMimeType = "text/plain"
+                        topP = 0.8,
+                        topK = 10,
+                        responseMimeType = useJsonForOutput ? "application/json" : "text/plain"
                     }
                 };
 
-                string jsonBody = System.Text.Json.JsonSerializer.Serialize(requestBody);
-                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+                var body = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync($"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key={ApiKey}", content);
+                var apiResponse = await client.PostAsync(apiEndpoint, body);
+                apiResponse.EnsureSuccessStatusCode();
 
-                response.EnsureSuccessStatusCode();
-
-                var res = await response.Content.ReadAsStringAsync();
-                var dto = JsonConvert.DeserializeObject<OneShotResponse.Root>(res);
+                var apiResponseContent = await apiResponse.Content.ReadAsStringAsync();
+                var dto = JsonConvert.DeserializeObject<OneShotResponse.Root>(apiResponseContent);
                 return dto.Candidates[0].Content.Parts[0].Text;
             }
         }

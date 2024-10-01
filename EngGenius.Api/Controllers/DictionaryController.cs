@@ -12,9 +12,9 @@ namespace EngGenius.Api.Controllers
     {
         private readonly AppDbContext _db;
 
-        public DictionaryController(AppDbContext context)
+        public DictionaryController(AppDbContext db)
         {
-            _db = context;
+            _db = db;
         }
 
         [HttpGet("Search")]
