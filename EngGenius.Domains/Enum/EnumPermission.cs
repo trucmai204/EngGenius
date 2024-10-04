@@ -2,7 +2,7 @@
 {
     public enum EnumPermission
     {
-        Basic = 1,
+        Free = 1,
         Premium = 2
     }
 }

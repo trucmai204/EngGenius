@@ -1,9 +1,12 @@
 ﻿USE master;
+
 DROP DATABASE [EngGenius];
 CREATE DATABASE [EngGenius];
 GO
+
 USE [EngGenius];
 GO
+
 CREATE TABLE [User] (
 	[Id] INT IDENTITY,
 	[Name] NVARCHAR(255),

@@ -1,4 +1,6 @@
-﻿using EngGenius.Database;
+﻿using EngGenius.Api.DTO;
+using EngGenius.Api.Helper;
+using EngGenius.Database;
 using EngGenius.Domains;
 using EngGenius.Domains.Enum;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +27,7 @@ namespace EngGenius.Api.Controllers
         }
 
         [HttpGet("Login")]
-        public async Task<ActionResult<UserPermission>> Login(string email, string password)
+        public async Task<ActionResult<LoginResponseDTO>> Login(string email, string password)
         {
             var user = await _db.User
                 .Include(u => u.Permission)
@@ -36,7 +38,23 @@ namespace EngGenius.Api.Controllers
                 return BadRequest("Email hoặc mật khẩu của bạn không đúng!");
             }
 
-            return Ok(user.Permission);
+            var loginResponseDTO = new LoginResponseDTO
+            {
+                Name = user.Name,
+                Level = new LoginResponseDTO.UserLevel
+                {
+                    Id = user.LevelId,
+                    Name = EnumHelper.GetEnumDescription(user.LevelId)
+                },
+                Permission = new LoginResponseDTO.PermissionInfo
+                {
+                    Id = user.PermissionId,
+                    Name = EnumHelper.GetEnumDescription(user.PermissionId)
+                }
+    
+
+            };
+            return Ok(loginResponseDTO);
         }
 
         [HttpPost("Register")]
@@ -50,11 +68,13 @@ namespace EngGenius.Api.Controllers
                 return BadRequest("Email đã tồn tại!");
             }
 
-            user.PermissionId = EnumPermission.Basic;
+            user.PermissionId = EnumPermission.Free;
 
             _db.User.Add(user);
             await _db.SaveChangesAsync();
             return Ok(user);
         }
+
+
     }
 }

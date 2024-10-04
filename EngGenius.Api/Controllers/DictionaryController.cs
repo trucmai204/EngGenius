@@ -50,7 +50,7 @@ namespace EngGenius.Api.Controllers
 
             var userHistory = new UserHistory
             {
-                ActionTypeId = Domains.Enum.EnumActionType.DictionarySearch,
+                ActionTypeId = Domains.Enum.EnumActionType.SearchWord,
                 Input = $"{keyword}\n{context}".Trim(),
                 Output = result,
                 ActionTime = DateTime.Now,
