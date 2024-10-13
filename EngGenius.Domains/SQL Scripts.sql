@@ -12,6 +12,7 @@ CREATE TABLE [User] (
 	[Name] NVARCHAR(255),
 	[Email] VARCHAR(255),
 	[Password] VARCHAR(255),
+	[ApiKey] VARCHAR(255),
 	[LevelId] INT,
 	[PermissionId] INT,
 	[IsDeleted] BIT,

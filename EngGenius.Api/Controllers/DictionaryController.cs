@@ -2,6 +2,7 @@
 using EngGenius.Domains;
 using GenAI;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace EngGenius.Api.Controllers
@@ -18,13 +19,17 @@ namespace EngGenius.Api.Controllers
         }
 
         [HttpGet("Search")]
-        public async Task<ActionResult<string>> Search(int userId, string apiKey, string keyword, string? context)
+         [ResponseCache(Duration = int.MaxValue, Location = ResponseCacheLocation.Any, NoStore = false)] 
+        public async Task<ActionResult<string>> Search(int userId, string keyword, string? context)
         {
             var promptBuilder = new StringBuilder();
 
+            var user = await _db.User
+                .FindAsync(userId);
+
             var generator = new Generator
             {
-                ApiKey = apiKey.Trim(),
+                ApiKey = user.ApiKey,
             };
 
             keyword = keyword.Trim();

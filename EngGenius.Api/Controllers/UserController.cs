@@ -3,6 +3,7 @@ using EngGenius.Api.Helper;
 using EngGenius.Database;
 using EngGenius.Domains;
 using EngGenius.Domains.Enum;
+using GenAI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,7 @@ namespace EngGenius.Api.Controllers
         }
 
         [HttpGet("Login")]
+        [ResponseCache(Duration = int.MaxValue, Location = ResponseCacheLocation.Any, NoStore = false)] 
         public async Task<ActionResult<LoginResponseDTO>> Login(string email, string password)
         {
             var user = await _db.User
@@ -58,9 +60,10 @@ namespace EngGenius.Api.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult<User>> Register([FromBody] User user)
+        public async Task<ActionResult> Register([FromBody] RegisterRequestDTO user)
         {
             var emailExisted = await _db.User
+                .AsNoTracking() // chi doc không the sua doi
                 .AnyAsync(u => u.Email == user.Email.ToLower().Trim());
 
             if (emailExisted)
@@ -68,13 +71,86 @@ namespace EngGenius.Api.Controllers
                 return BadRequest("Email đã tồn tại!");
             }
 
-            user.PermissionId = EnumPermission.Free;
+            var generator = new Generator
+            {
+                ApiKey = user.ApiKey
+            };
+            try
+            {
+                var content = await generator.GenerateContent("say hello");
+            }
+            catch 
+            {
+                return BadRequest("API Key không hợp lệ!");
+            }
+            var newUser = new User
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password,
+                ApiKey = user.ApiKey,
+                LevelId = user.LevelId,
+                PermissionId = EnumPermission.Free,
+                IsDeleted = false
+            };
 
-            _db.User.Add(user);
+            _db.User.Add(newUser);
             await _db.SaveChangesAsync();
-            return Ok(user);
+
+            return Created();
         }
 
+        [HttpPost("Update")]
+        public async Task<ActionResult> Update(int userId, [FromBody] UpdateUserRequestDTO updateDTO)
+        {
+            var user = await _db.User.FindAsync(userId);
+            if (user == null) 
+            {
+                return BadRequest($"Người dùng có Id = {userId} không tồn tại!");
+            }
 
+            user.Name = updateDTO.Name != null ? updateDTO.Name : user.Name;
+            user.Password = updateDTO.Password != null ? updateDTO.Password : user.Password;
+            user.LevelId = updateDTO.LevelId != null ? (EnumLevel)updateDTO.LevelId : user.LevelId;
+
+            if (updateDTO.ApiKey != null) 
+            {
+                var generator = new Generator
+                {
+                    ApiKey = user.ApiKey
+                };
+                try
+                {
+                    var content = await generator.GenerateContent("say hello"); 
+                }
+                catch
+                {
+                    return BadRequest("API Key không hợp lệ!");
+                }
+                user.ApiKey = updateDTO.ApiKey;
+            }
+           
+            _db.User.Update(user);
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpGet("History")]
+        public async Task<ActionResult<List<HistoryResponseDTO>>> GetHistory(int userId, EnumActionType actionType)
+        {
+            var history = await _db.UserHistory
+                .AsNoTracking()
+                .Where(h => h.UserId == userId && h.ActionTypeId == actionType)
+                .OrderByDescending(h => h.ActionTime)
+                .Select(h => new HistoryResponseDTO
+                {
+                    Input = h.Input,
+                    Output = h.Output,
+                    ActionTime = h.ActionTime
+                })
+                .ToListAsync();
+            return Ok(history);
+        }
     }
 }
