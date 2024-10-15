@@ -19,7 +19,7 @@ namespace EngGenius.Api.Controllers
         }
 
         [HttpGet("Search")]
-         [ResponseCache(Duration = int.MaxValue, Location = ResponseCacheLocation.Any, NoStore = false)] 
+        [ResponseCache(Duration = int.MaxValue, Location = ResponseCacheLocation.Any, NoStore = false)] 
         public async Task<ActionResult<string>> Search(int userId, string keyword, string? context)
         {
             var promptBuilder = new StringBuilder();

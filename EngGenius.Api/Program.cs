@@ -1,4 +1,4 @@
-
+﻿
 using EngGenius.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +17,15 @@ namespace EngGenius.Api
 
             // Add Swagger UI
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "API của bạn",
+                    Version = "v1",
+                    Description = "Đây là tài liệu API của tôi"
+                });
+            });
 
             // Add CORS policies
             builder.Services.AddCors(options =>
@@ -33,7 +41,11 @@ namespace EngGenius.Api
             app.UseCors("CorsPolicies");
 
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+            });
+
 
             app.UseHttpsRedirection();
 

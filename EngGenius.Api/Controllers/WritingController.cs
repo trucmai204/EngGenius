@@ -31,8 +31,7 @@ namespace EngGenius.Api.Controllers
             {
                 ApiKey = user.ApiKey,
             };
-            string essayCriteria = @"When evaluating an English writing task based on a given topic, I consider several key criteria to ensure the essay meets both content and structural requirements. These criteria include:
-
+            string essayCriteria = @"
                 1. Task Achievement:
                    - Understanding the prompt: Does the essay respond correctly and fully to the prompt? Does the writer address the main issue of the topic?
                    - Clear arguments: Does the essay stick to and develop the main ideas related to the topic? Are the arguments presented coherently and without deviating from the topic?
@@ -69,17 +68,15 @@ namespace EngGenius.Api.Controllers
                 - Lexical Resource: Use words like 'flexibility,' 'cost-effective,' 'lack of face-to-face interaction' to express ideas accurately.
                 - Grammatical Range and Accuracy: Use complex sentences like 'Although online learning offers flexibility, it also presents challenges in maintaining student engagement.'
                 - Spelling and Punctuation: Avoid mistakes like 'learining' instead of 'learning' and use punctuation correctly to break long sentences when needed.
-                - Tone and Style: The tone should be formal, appropriate for the educational context, avoiding overly casual language.
-
-                Applying these criteria will not only make the essay more persuasive but also demonstrate the writer's English proficiency.";
+                - Tone and Style: The tone should be formal, appropriate for the educational context, avoiding overly casual language.";
 
             Console.WriteLine(essayCriteria);
 
             stringBuilder.AppendLine("You are an English teacher with over 30 years of experiences. This is criteria for you to review my writting: ");
-            stringBuilder.AppendLine(essayCriteria);
+            stringBuilder.AppendLine(essayCriteria.Trim());
             stringBuilder.AppendLine($"Topic is: '{reviewWriting.Topic.Trim()}'. \n This is my writting: ");
             stringBuilder.AppendLine(reviewWriting.Content.Trim());
-            stringBuilder.AppendLine("Your review must be in Vietnamese and easy to understand for Vietnamese");
+            stringBuilder.AppendLine("Your review must be in Vietnamese and easy to understand for Vietnamese, and be structured following each criteria as described above..");
 
             var result = await generator.GenerateContent(stringBuilder.ToString());
 
