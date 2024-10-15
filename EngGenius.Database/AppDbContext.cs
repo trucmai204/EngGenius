@@ -8,5 +8,6 @@ namespace EngGenius.Database
         public DbSet<User> User { get; set; }
         public DbSet<UserPermission> UserPermission { get; set; }
         public DbSet<UserHistory> UserHistory { get; set; }
+        public DbSet<Level> Level { get; set; }
     }
 }

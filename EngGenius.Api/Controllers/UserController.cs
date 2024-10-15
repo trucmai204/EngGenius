@@ -53,10 +53,24 @@ namespace EngGenius.Api.Controllers
                     Id = user.PermissionId,
                     Name = EnumHelper.GetEnumDescription(user.PermissionId)
                 }
-    
-
             };
             return Ok(loginResponseDTO);
+        }
+
+        [HttpGet("GetEnglishLevels")]
+        //[ResponseCache(Duration = 1, Location = ResponseCacheLocation.Any, NoStore = false)]
+        public async Task<ActionResult<GetLevelRequestDTO>> GetEnglishLevels()
+        {
+            var levels = await _db.Level
+                .AsNoTracking()
+                .Select(l => new GetLevelRequestDTO
+                {
+                    Id = l.Id,
+                    Description = $"{l.Name} - {l.Description}",
+                })
+                .ToListAsync();
+
+            return Ok(levels);
         }
 
         [HttpPost("Register")]
