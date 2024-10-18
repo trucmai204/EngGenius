@@ -46,7 +46,6 @@ namespace EngGenius.Api.Controllers
             promptBuilder.AppendLine("- Cung cấp tối thiểu 3 từ đồng nghĩa và 3 từ trái nghĩa nếu có, đồng thời giải thích chi tiết về chúng.");
             promptBuilder.AppendLine($"- Cung cấp một số mẫu câu hoặc thành ngữ hoặc cụm từ phổ biến chứa '{keyword}'.");
             promptBuilder.AppendLine($"- Cung cấp thông tin về từ gốc và các từ phái sinh của '{keyword}' (nếu có)");
-            promptBuilder.AppendLine($"- Cung cấp thông tin về lịch sử hình thành của từ '{keyword}' (nếu có).");
             promptBuilder.AppendLine($"- Các dạng biến đổi của '{keyword}' được tra cứu như thì quá khứ, thì hiện tại, dạng số nhiều, dạng so sánh,... (nếu có).");
             promptBuilder.AppendLine($"- Một số fun facts ít người biết liên quan đến '{keyword}' (nếu có).");
             promptBuilder.AppendLine("Cách trình bày output của bạn phải thật dễ hiểu và chi tiết, tuy nhiên không được quá dài dòng.");

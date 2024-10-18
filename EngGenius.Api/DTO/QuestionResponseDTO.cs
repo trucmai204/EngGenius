@@ -5,5 +5,6 @@
         public string Content {  get; set; }
         public List<string> Choices { get; set; }
         public int ResultChoiceIndex { get; set; }
+        public string ExplainationForTheResult { get; set; } // must be in Vietnamese
     }
 }
