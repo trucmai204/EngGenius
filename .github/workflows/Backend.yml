@@ -50,13 +50,11 @@ jobs:
         path: ${{ env.PUBLISHED_PACKAGE_PATH }}
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -65,18 +63,11 @@ jobs:
           name: webapp
           path: ${{ env.PUBLISHED_PACKAGE_PATH }}
 
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9E2BA28105F84AFD89401E2726EF1DBD }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_402FD9B787BC4B3288DE743B007B8FE8 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B859B03F7EC74D26A2343B44FAEAF1F4 }}
-
       - name: Deploy to Azure
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
+        uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.WEBAPP_NAME }}
+          app-name: 'engenius'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E0CC68C95EC74D18A96F7CE46679F9B8 }}
           package: ${{ env.PUBLISHED_PACKAGE_PATH }}
