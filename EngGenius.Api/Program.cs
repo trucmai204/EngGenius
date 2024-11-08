@@ -33,9 +33,12 @@ namespace EngGenius.Api
                 options.AddPolicy("CorsPolicies",
                     builder =>
                     {
-                        builder.AllowAnyHeader().AllowAnyMethod();
+                        builder.WithOrigins("http://localhost:3000") // Cho phép yêu cầu từ localhost:3000
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
                     });
             });
+
 
             var app = builder.Build();
             app.UseCors("CorsPolicies");
