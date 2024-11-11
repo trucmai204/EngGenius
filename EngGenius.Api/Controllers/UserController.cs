@@ -6,6 +6,7 @@ using EngGenius.Domains.Enum;
 using GenAI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static GenAI.ResponseDTO.OneShotResponse;
 
 namespace EngGenius.Api.Controllers
 {
@@ -28,7 +29,6 @@ namespace EngGenius.Api.Controllers
         }
 
         [HttpGet("Login")]
-        [ResponseCache(Duration = int.MaxValue, Location = ResponseCacheLocation.Any, NoStore = false)] 
         public async Task<ActionResult<LoginResponseDTO>> Login(string email, string password)
         {
             var user = await _db.User
@@ -42,6 +42,7 @@ namespace EngGenius.Api.Controllers
 
             var loginResponseDTO = new LoginResponseDTO
             {
+                UserId = user.Id,
                 Name = user.Name,
                 Level = new LoginResponseDTO.UserLevel
                 {
@@ -151,14 +152,15 @@ namespace EngGenius.Api.Controllers
         }
 
         [HttpGet("History")]
-        public async Task<ActionResult<List<HistoryResponseDTO>>> GetHistory(int userId, EnumActionType actionType)
+        public async Task<ActionResult<List<HistoryResponseDTO>>> GetHistory(int userId)
         {
             var history = await _db.UserHistory
                 .AsNoTracking()
-                .Where(h => h.UserId == userId && h.ActionTypeId == actionType)
+                .Where(h => h.UserId == userId)
                 .OrderByDescending(h => h.ActionTime)
                 .Select(h => new HistoryResponseDTO
                 {
+                    ActionTypeId = h.ActionTypeId,
                     Input = h.Input,
                     Output = h.Output,
                     ActionTime = h.ActionTime
@@ -166,5 +168,7 @@ namespace EngGenius.Api.Controllers
                 .ToListAsync();
             return Ok(history);
         }
+        
+
     }
 }

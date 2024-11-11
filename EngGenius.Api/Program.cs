@@ -30,18 +30,19 @@ namespace EngGenius.Api
             // Add CORS policies
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicies",
+                options.AddPolicy("AllowAllOrigins",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000") // Cho phép yêu cầu từ localhost:3000
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
                     });
             });
 
-
             var app = builder.Build();
-            app.UseCors("CorsPolicies");
+
+            // Áp dụng CORS
+            app.UseCors("AllowAllOrigins");
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

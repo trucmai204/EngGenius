@@ -4,6 +4,7 @@ namespace EngGenius.Api.DTO
 {
     public class LoginResponseDTO
     {
+        public int UserId { get; set; }
         public string Name { get; set; }
         public UserLevel Level { get; set; }
         public PermissionInfo Permission { get; set; }

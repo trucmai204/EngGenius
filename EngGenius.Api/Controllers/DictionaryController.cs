@@ -22,6 +22,11 @@ namespace EngGenius.Api.Controllers
         [ResponseCache(Duration = int.MaxValue, Location = ResponseCacheLocation.Any, NoStore = false)] 
         public async Task<ActionResult<string>> Search(int userId, string keyword, string? context)
         {
+            if (context != null && !context.Contains(keyword)) 
+            {
+                return BadRequest("Ngữ cảnh phải chứa từ khóa");
+            }
+
             var promptBuilder = new StringBuilder();
 
             var user = await _db.User
