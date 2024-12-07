@@ -28,6 +28,30 @@ namespace EngGenius.Api.Controllers
                 .ToListAsync();
         }
 
+        [HttpGet("GetUserById")]
+        public async Task<ActionResult<GetUserRequestDTO>> GetUserById(int userId)
+        {
+            var user = await _db.User
+                .Where(u => u.Id == userId && !u.IsDeleted) // Kiểm tra IsDeleted
+                .Select(u => new GetUserRequestDTO
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Password = u.Password,
+                    ApiKey = u.ApiKey,
+                    LevelId = u.LevelId,
+                })
+                .FirstOrDefaultAsync();
+
+            // Kiểm tra nếu không tìm thấy user
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            return Ok(user);
+        }
+
         [HttpGet("Login")]
         public async Task<ActionResult<LoginResponseDTO>> Login(string email, string password)
         {
