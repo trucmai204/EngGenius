@@ -40,6 +40,7 @@ namespace EngGenius.Api.Controllers
                     Password = u.Password,
                     ApiKey = u.ApiKey,
                     LevelId = u.LevelId,
+                    PermissionId = u.PermissionId,
                 })
                 .FirstOrDefaultAsync();
 
@@ -173,6 +174,34 @@ namespace EngGenius.Api.Controllers
             await _db.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpPost("UpadateUserPermission")]
+        public async Task<IActionResult> UpdatePermission(int userId)
+        {
+            try
+            {
+                // Tìm user theo userId
+                var user = await _db.User.FindAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found." });
+                }
+
+                // Cập nhật quyền của user lên Premium
+                user.PermissionId = EnumPermission.Premium;
+
+                // Lưu thay đổi vào database
+                _db.User.Update(user);
+                await _db.SaveChangesAsync();
+
+                return Ok(new { message = "User permission updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
+            }
         }
 
         [HttpGet("History")]

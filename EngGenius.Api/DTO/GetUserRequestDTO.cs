@@ -9,5 +9,7 @@ namespace EngGenius.Api.DTO
         public string Password { get; set; }
         public string ApiKey { get; set; }
         public EnumLevel LevelId { get; set; }
+
+        public EnumPermission PermissionId { get; set; }
     }
 }
