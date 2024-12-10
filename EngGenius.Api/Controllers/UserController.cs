@@ -6,6 +6,7 @@ using EngGenius.Domains.Enum;
 using GenAI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PaymentHelper;
 using static GenAI.ResponseDTO.OneShotResponse;
 
 namespace EngGenius.Api.Controllers
@@ -221,7 +222,13 @@ namespace EngGenius.Api.Controllers
                 .ToListAsync();
             return Ok(history);
         }
-        
 
+        [HttpGet("CreateQR")]
+        public ActionResult<string> CreateQr()
+        {
+            var qrPay = QRPay.InitVietQR(BankApp.BanksObject[BankKey.MBBANK].bin, "257678859" );
+            var content = qrPay.Build();
+            return Ok(content);
+        }
     }
 }
