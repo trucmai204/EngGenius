@@ -2,11 +2,8 @@
 using EngGenius.Database;
 using EngGenius.Domains;
 using GenAI;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Emit;
 using System.Text;
-using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace EngGenius.Api.Controllers
 {

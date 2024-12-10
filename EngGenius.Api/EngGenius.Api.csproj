@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EngGenius.Database\EngGenius.Database.csproj" />
     <ProjectReference Include="..\GenAI\GenAI.csproj" />
-    <ProjectReference Include="..\PaymentHelper\PaymentHelper.csproj" />
+    <ProjectReference Include="..\VnpayHelper\VnpayHelper.csproj" />
   </ItemGroup>
 
 </Project>

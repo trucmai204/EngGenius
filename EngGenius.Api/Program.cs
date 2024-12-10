@@ -1,6 +1,7 @@
 ﻿
 using EngGenius.Database;
 using Microsoft.EntityFrameworkCore;
+using VnpayHelper;
 
 namespace EngGenius.Api
 {
@@ -12,6 +13,7 @@ namespace EngGenius.Api
 
             // Connect to SQL Server
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddSingleton<IVnpay, Vnpay>();
 
             builder.Services.AddControllers();
 

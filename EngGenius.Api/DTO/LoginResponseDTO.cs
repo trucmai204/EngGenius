@@ -20,6 +20,6 @@ namespace EngGenius.Api.DTO
             public EnumPermission Id { get; set; }
             public string Name { get; set; }
         }
-        
+
     }
 }

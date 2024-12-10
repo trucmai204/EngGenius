@@ -6,8 +6,6 @@ using EngGenius.Domains.Enum;
 using GenAI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PaymentHelper;
-using static GenAI.ResponseDTO.OneShotResponse;
 
 namespace EngGenius.Api.Controllers
 {
@@ -85,7 +83,7 @@ namespace EngGenius.Api.Controllers
         }
 
         [HttpGet("GetEnglishLevels")]
-        //[ResponseCache(Duration = 1, Location = ResponseCacheLocation.Any, NoStore = false)]
+        [ResponseCache(Duration = 1, Location = ResponseCacheLocation.Any, NoStore = false)]
         public async Task<ActionResult<GetLevelRequestDTO>> GetEnglishLevels()
         {
             var levels = await _db.Level
@@ -118,9 +116,9 @@ namespace EngGenius.Api.Controllers
             };
             try
             {
-                var content = await generator.GenerateContent("say hello");
+                await generator.GenerateContent("say hello");
             }
-            catch 
+            catch
             {
                 return BadRequest("API Key không hợp lệ!");
             }
@@ -145,7 +143,7 @@ namespace EngGenius.Api.Controllers
         public async Task<ActionResult> Update(int userId, [FromBody] UpdateUserRequestDTO updateDTO)
         {
             var user = await _db.User.FindAsync(userId);
-            if (user == null) 
+            if (user == null)
             {
                 return BadRequest($"Người dùng có Id = {userId} không tồn tại!");
             }
@@ -154,7 +152,7 @@ namespace EngGenius.Api.Controllers
             user.Password = updateDTO.Password != null ? updateDTO.Password : user.Password;
             user.LevelId = updateDTO.LevelId != null ? (EnumLevel)updateDTO.LevelId : user.LevelId;
 
-            if (updateDTO.ApiKey != null) 
+            if (updateDTO.ApiKey != null)
             {
                 var generator = new Generator
                 {
@@ -162,7 +160,7 @@ namespace EngGenius.Api.Controllers
                 };
                 try
                 {
-                    var content = await generator.GenerateContent("say hello"); 
+                    var content = await generator.GenerateContent("Say 'hello'");
                 }
                 catch
                 {
@@ -170,7 +168,7 @@ namespace EngGenius.Api.Controllers
                 }
                 user.ApiKey = updateDTO.ApiKey;
             }
-           
+
             _db.User.Update(user);
             await _db.SaveChangesAsync();
 
@@ -182,26 +180,23 @@ namespace EngGenius.Api.Controllers
         {
             try
             {
-                // Tìm user theo userId
                 var user = await _db.User.FindAsync(userId);
 
                 if (user == null)
                 {
-                    return NotFound(new { message = "User not found." });
+                    return NotFound("Người dùng không tồn tại.");
                 }
 
-                // Cập nhật quyền của user lên Premium
                 user.PermissionId = EnumPermission.Premium;
 
-                // Lưu thay đổi vào database
                 _db.User.Update(user);
                 await _db.SaveChangesAsync();
 
-                return Ok(new { message = "User permission updated successfully." });
+                return Ok("Nâng hạng thành công!");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
+                return StatusCode(500, $"Không thể nâng hạng người dùng! {ex.Message}");
             }
         }
 
@@ -221,14 +216,6 @@ namespace EngGenius.Api.Controllers
                 })
                 .ToListAsync();
             return Ok(history);
-        }
-
-        [HttpGet("CreateQR")]
-        public ActionResult<string> CreateQr()
-        {
-            var qrPay = QRPay.InitVietQR(BankApp.BanksObject[BankKey.MBBANK].bin, "257678859" );
-            var content = qrPay.Build();
-            return Ok(content);
         }
     }
 }

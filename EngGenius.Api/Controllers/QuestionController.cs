@@ -3,8 +3,6 @@ using EngGenius.Api.Helper;
 using EngGenius.Database;
 using EngGenius.Domains;
 using EngGenius.Domains.Enum;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
